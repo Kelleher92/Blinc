@@ -34,6 +34,13 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="landscape" >
         </activity>
+        <activity
+            android:name=".ImageActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_image"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme" >
+        </activity>
     </application>
 
 </manifest>
