@@ -103,7 +103,7 @@ public class circleHough {
 
         findMaxima();
 
-        return output;
+        return results;
     }
 
     private int[] findMaxima() {
@@ -171,23 +171,9 @@ public class circleHough {
 
         for (int i = accSize - 1; i >= 0; i--) {
             Log.i("results", " " + results[i * 3] + " " + results[i * 3 + 1] + " " + results[i * 3 + 2]);
-            drawCircle(results[i * 3], results[i * 3 + 1], results[i * 3 + 2]);
         }
 
-        return output;
-    }
-
-    private void setCentre(int xPos, int yPos) {
-        output[(yPos * width) + xPos] = -1;
-        output[(yPos * width) + (xPos + 1)] = -1;
-        output[(yPos * width) + (xPos - 1)] = -1;
-        output[((yPos + 1) * width) + xPos] = -1;
-        output[((yPos - 1) * width) + xPos] = -1;
-    }
-
-    // draw cross at x y
-    private void drawCircle(int pix, int xCenter, int yCenter) {
-        setCentre(xCenter, yCenter);
+        return results;
     }
 
 }

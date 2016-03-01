@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import java.io.IOException;
@@ -28,15 +29,15 @@ public class ImageActivity extends AppCompatActivity {
 
     int RESULT_LOAD_IMAGE = 1;
     int radius = 15;
-    ImageView imageView;
     Button back;
+    EditText scoreDisp;
     MediaMetadataRetriever mediaMetadataRetriever;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_image);
-        back = (Button) findViewById(R.id.Backbutton);
+
+        setContentView(R.layout.activity_score);
 
         mediaMetadataRetriever = new MediaMetadataRetriever();
         Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
@@ -56,37 +57,21 @@ public class ImageActivity extends AppCompatActivity {
             cursor.close();
 
             Bitmap image = null;
-            Bitmap returnedImage = null;
+            int score = 0;
 
             mediaMetadataRetriever.setDataSource(picturePath);
 
-            for (int i = 1; i <= 3; i++) {
+            for (int i = 1; i <= 10; i++) {
                 image = mediaMetadataRetriever.getFrameAtTime(i * 1000000); //unit in microsecond
-
                 try {
-                    returnedImage = processFrame.processFrame(image, radius);
+                    score += processFrame.processFrame(image, radius);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
 
-            imageView = (ImageView) findViewById(R.id.imgView);
-            imageView.setImageBitmap(returnedImage);
-
-//
-//            ProcessRequests processRequests = new ProcessRequests(this);
-//            processRequests.processFrameInBackground(input, radius, new GetImageCallback() {
-//                @Override
-//                public void done(Bitmap returnedImage) {
-//                    if (returnedImage == null) {
-//                        imageView.setImageBitmap(input);
-//                        Log.i("MyActivity", "No returned image");
-//                    } else {
-//                        imageView.setImageBitmap(returnedImage);
-//                        Log.i("MyActivity", "Returned image");
-//                    }
-//                }
-//            });
+            scoreDisp = (EditText) this.findViewById(R.id.editText);
+            scoreDisp.setText(String.valueOf(score));
         }
     }
 
