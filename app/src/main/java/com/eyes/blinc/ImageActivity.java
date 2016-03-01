@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -26,9 +27,10 @@ import java.io.IOException;
 public class ImageActivity extends AppCompatActivity {
 
     int RESULT_LOAD_IMAGE = 1;
-    int radius = 25;
+    int radius = 15;
     ImageView imageView;
     Button back;
+    MediaMetadataRetriever mediaMetadataRetriever;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,7 +38,8 @@ public class ImageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image);
         back = (Button) findViewById(R.id.Backbutton);
 
-        Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);   //  PHONE IMAGES
+        mediaMetadataRetriever = new MediaMetadataRetriever();
+        Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, RESULT_LOAD_IMAGE);
     }
 
@@ -52,17 +55,20 @@ public class ImageActivity extends AppCompatActivity {
             String picturePath = cursor.getString(columnIndex);
             cursor.close();
 
-            final Bitmap input = BitmapFactory.decodeFile(picturePath);
+            Bitmap image = null;
+            Bitmap returnedImage = null;
 
-            Bitmap image = toGrayscale(input);
-            Bitmap returnedImage = image;
+            mediaMetadataRetriever.setDataSource(picturePath);
 
-            try {
-                returnedImage = processFrame.processFrame(image, radius);
-            } catch (IOException e) {
-                e.printStackTrace();
+            for (int i = 1; i <= 3; i++) {
+                image = mediaMetadataRetriever.getFrameAtTime(i * 1000000); //unit in microsecond
+
+                try {
+                    returnedImage = processFrame.processFrame(image, radius);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-
 
             imageView = (ImageView) findViewById(R.id.imgView);
             imageView.setImageBitmap(returnedImage);
@@ -82,22 +88,6 @@ public class ImageActivity extends AppCompatActivity {
 //                }
 //            });
         }
-    }
-
-    public Bitmap toGrayscale(Bitmap bmpOriginal) {
-        int width, height;
-        height = bmpOriginal.getHeight();
-        width = bmpOriginal.getWidth();
-
-        Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(bmpGrayscale);
-        Paint paint = new Paint();
-        ColorMatrix cm = new ColorMatrix();
-        cm.setSaturation(0);
-        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
-        paint.setColorFilter(f);
-        c.drawBitmap(bmpOriginal, 0, 0, paint);
-        return bmpGrayscale;
     }
 
     public void Back(View view) {

@@ -5,6 +5,13 @@ package com.eyes.blinc;
  */
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
+import android.graphics.PointF;
+import android.media.FaceDetector;
 import android.util.Log;
 
 import java.io.IOException;
@@ -15,9 +22,22 @@ public class processFrame {
     static nonmax nonMaxSuppressionObject;
     static circleHough circleHoughObject;
     static hystThresh hystThreshObject;
+    static FaceDetector myFaceDetect;
+    static FaceDetector.Face[] myFace;
+    static float myEyesDistance;
 
     public static Bitmap processFrame(Bitmap image, int radius) throws IOException {
         Log.i("START", "now");
+
+        myFace = new FaceDetector.Face[1];
+        myFaceDetect = new FaceDetector(image.getWidth(), image.getHeight(), 1);
+        myFaceDetect.findFaces(image, myFace);
+
+        PointF myMidPoint = new PointF();
+        myFace[0].getMidPoint(myMidPoint);
+        myEyesDistance = myFace[0].eyesDistance();
+
+        image = toGrayscale(Bitmap.createBitmap(image, (int) (myMidPoint.x - myEyesDistance/1.5), (int) (myMidPoint.y - myEyesDistance/4), (int) (myEyesDistance*1.5), (int) myEyesDistance/2));
 
         sobelObject = new sobel();
         nonMaxSuppressionObject = new nonmax();
@@ -71,4 +91,19 @@ public class processFrame {
         return myImage;
     }
 
+    public static Bitmap toGrayscale(Bitmap bmpOriginal) {
+        int width, height;
+        height = bmpOriginal.getHeight();
+        width = bmpOriginal.getWidth();
+
+        Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmpGrayscale);
+        Paint paint = new Paint();
+        ColorMatrix cm = new ColorMatrix();
+        cm.setSaturation(0);
+        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+        paint.setColorFilter(f);
+        c.drawBitmap(bmpOriginal, 0, 0, paint);
+        return bmpGrayscale;
+    }
 }

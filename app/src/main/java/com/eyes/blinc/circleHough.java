@@ -159,7 +159,6 @@ public class circleHough {
         }
         Log.i("STOP", "now");
 
-
         // Take top results from left & right half of image
         results[0] = resultsRight[0];
         results[1] = resultsRight[1];
@@ -171,15 +170,11 @@ public class circleHough {
         double ratio = (double) (width / 2) / accSize;
 
         for (int i = accSize - 1; i >= 0; i--) {
-            progress += ratio;
+            Log.i("results", " " + results[i * 3] + " " + results[i * 3 + 1] + " " + results[i * 3 + 2]);
             drawCircle(results[i * 3], results[i * 3 + 1], results[i * 3 + 2]);
         }
 
         return output;
-    }
-
-    private void setPixel(int xPos, int yPos) {
-        output[(yPos * width) + xPos] = -1;
     }
 
     private void setCentre(int xPos, int yPos) {
@@ -190,50 +185,9 @@ public class circleHough {
         output[((yPos - 1) * width) + xPos] = -1;
     }
 
-    // draw circle at x y
+    // draw cross at x y
     private void drawCircle(int pix, int xCenter, int yCenter) {
-
-        int x, y, r2;
-        int radius = r;
-        r2 = r * r;
-
         setCentre(xCenter, yCenter);
-
-        setPixel(xCenter, yCenter + radius);
-        setPixel(xCenter, yCenter - radius);
-        setPixel(xCenter + radius, yCenter);
-        setPixel(xCenter - radius, yCenter);
-
-        y = radius;
-        x = 1;
-        y = (int) (Math.sqrt(r2 - 1) + 0.5);
-
-        while (x < y) {
-            setPixel(xCenter + x, yCenter + y);
-            setPixel(xCenter + x, yCenter - y);
-            setPixel(xCenter - x, yCenter + y);
-            setPixel(xCenter - x, yCenter - y);
-            setPixel(xCenter + y, yCenter + x);
-            setPixel(xCenter + y, yCenter - x);
-            setPixel(xCenter - y, yCenter + x);
-            setPixel(xCenter - y, yCenter - x);
-            x += 1;
-            y = (int) (Math.sqrt(r2 - x * x) + 0.5);
-        }
-        if (x == y) {
-            setPixel(xCenter + x, yCenter + y);
-            setPixel(xCenter + x, yCenter - y);
-            setPixel(xCenter - x, yCenter + y);
-            setPixel(xCenter - x, yCenter - y);
-        }
-    }
-
-    public int[] getAcc() {
-        return acc;
-    }
-
-    public int getProgress() {
-        return (int) progress;
     }
 
 }
