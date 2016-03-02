@@ -27,7 +27,7 @@ public class processFrame {
     static float myEyesDistance;
     static int[] score;
 
-    public static int processFrame(Bitmap image, int radius) throws IOException {
+    public static int processFrame(Bitmap image) throws IOException {
         Log.i("START", "now");
 
         myFace = new FaceDetector.Face[1];
@@ -37,6 +37,8 @@ public class processFrame {
         PointF myMidPoint = new PointF();
         myFace[0].getMidPoint(myMidPoint);
         myEyesDistance = myFace[0].eyesDistance();
+
+        int radius = (int) (myEyesDistance/11);
 
         image = toGrayscale(Bitmap.createBitmap(image, (int) (myMidPoint.x - myEyesDistance/1.5), (int) (myMidPoint.y - myEyesDistance/4), (int) (myEyesDistance*1.5), (int) myEyesDistance/2));
 

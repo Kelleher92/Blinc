@@ -46,21 +46,19 @@ public class ProcessRequests {
         return bmpGrayscale;
     }
 
-    public void processFramesInBackground(String inputSource, int radius, GetScoreCallback scoreCallback) {
+    public void processFramesInBackground(String inputSource, GetScoreCallback scoreCallback) {
         progressDialog.show();
-        new processFramesAsyncTask(inputSource, radius, scoreCallback).execute();
+        new processFramesAsyncTask(inputSource, scoreCallback).execute();
     }
 
     public class processFramesAsyncTask extends AsyncTask<Void, Void, Integer> {
         Bitmap input;
         GetScoreCallback scoreCallback;
-        int radius;
         String inputSource;
 
-        public processFramesAsyncTask(String inputSource, int radius, GetScoreCallback scoreCallback) {
+        public processFramesAsyncTask(String inputSource, GetScoreCallback scoreCallback) {
             this.inputSource = inputSource;
             this.scoreCallback = scoreCallback;
-            this.radius = radius;
             mediaMetadataRetriever.setDataSource(inputSource);
 
         }
@@ -73,7 +71,7 @@ public class ProcessRequests {
             for (int i = 1; i <= 10; i++) {
                 image = mediaMetadataRetriever.getFrameAtTime(i * 1000000); //unit in microsecond
                 try {
-                    score += processFrame.processFrame(image, radius);
+                    score += processFrame.processFrame(image);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

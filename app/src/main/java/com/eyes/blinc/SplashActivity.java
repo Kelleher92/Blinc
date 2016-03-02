@@ -168,7 +168,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     public void goHome(View view) {
-        Intent i = new Intent(this, ImageActivity.class);
+        Intent i = new Intent(this, MainActivity.class);
         startActivity(i);
         finish();
     }
