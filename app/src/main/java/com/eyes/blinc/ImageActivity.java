@@ -1,5 +1,6 @@
 package com.eyes.blinc;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -29,9 +30,7 @@ public class ImageActivity extends AppCompatActivity {
 
     int RESULT_LOAD_IMAGE = 1;
     int radius = 15;
-    Button back;
     EditText scoreDisp;
-    MediaMetadataRetriever mediaMetadataRetriever;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,7 +38,6 @@ public class ImageActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_score);
 
-        mediaMetadataRetriever = new MediaMetadataRetriever();
         Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, RESULT_LOAD_IMAGE);
     }
@@ -57,26 +55,29 @@ public class ImageActivity extends AppCompatActivity {
             cursor.close();
 
             Bitmap image = null;
-            int score = 0;
-
-            mediaMetadataRetriever.setDataSource(picturePath);
-
-            for (int i = 1; i <= 10; i++) {
-                image = mediaMetadataRetriever.getFrameAtTime(i * 1000000); //unit in microsecond
-                try {
-                    score += processFrame.processFrame(image, radius);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
+            final int score = 0;
             scoreDisp = (EditText) this.findViewById(R.id.editText);
+
+            ProcessRequests processRequests = new ProcessRequests(this);
+            processRequests.processFramesInBackground(picturePath, radius, new GetScoreCallback() {
+                @Override
+                public void done(int returnedScore) {
+                    if (returnedScore == 0) {
+                        scoreDisp.setText(String.valueOf(score));
+                        Log.i("MyActivity", "No returned score");
+                    } else {
+                        scoreDisp.setText(String.valueOf(returnedScore));
+                        Log.i("MyActivity", "Returned score");
+                    }
+                }
+            });
+
             scoreDisp.setText(String.valueOf(score));
         }
     }
 
     public void Back(View view) {
-        Intent i = new Intent(this, MainActivity.class);
+        Intent i = new Intent(this, SplashActivity.class);
         startActivity(i);
         finish();
     }

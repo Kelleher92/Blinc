@@ -171,9 +171,26 @@ public class circleHough {
 
         for (int i = accSize - 1; i >= 0; i--) {
             Log.i("results", " " + results[i * 3] + " " + results[i * 3 + 1] + " " + results[i * 3 + 2]);
+            drawCircle(results[i * 3], results[i * 3 + 1], results[i * 3 + 2]);
         }
 
         return results;
     }
 
+    public int[] draw() {
+        for (int i = accSize - 1; i >= 0; i--) {
+            drawCircle(results[i * 3], results[i * 3 + 1], results[i * 3 + 2]);
+        }
+
+        return output;
+    }
+
+    private void setCentre(int xPos, int yPos) {
+        output[(yPos * width) + xPos] = -1;
+    }
+
+    // draw circle at x y
+    private void drawCircle(int pix, int xCenter, int yCenter) {
+        setCentre(xCenter, yCenter);
+    }
 }
