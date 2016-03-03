@@ -157,7 +157,6 @@ public class circleHough {
                 }
             }
         }
-        Log.i("STOP", "now");
 
         // Take top results from left & right half of image
         results[0] = resultsRight[0];
@@ -170,7 +169,7 @@ public class circleHough {
         double ratio = (double) (width / 2) / accSize;
 
         for (int i = accSize - 1; i >= 0; i--) {
-            Log.i("results", " " + results[i * 3] + " " + results[i * 3 + 1] + " " + results[i * 3 + 2]);
+            //Log.i("results", " " + results[i * 3] + " " + results[i * 3 + 1] + " " + results[i * 3 + 2]);
             drawCircle(results[i * 3], results[i * 3 + 1], results[i * 3 + 2]);
         }
 

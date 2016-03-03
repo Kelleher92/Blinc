@@ -2,6 +2,7 @@ package com.eyes.blinc;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
@@ -9,11 +10,17 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 
 import com.eyes.blinc.processFrame;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.text.Format;
+import java.util.List;
+
+import static java.lang.Math.abs;
 
 /**
  * Created by Ian on 02-Mar-16.
@@ -21,29 +28,15 @@ import java.io.IOException;
 public class ProcessRequests {
     ProgressDialog progressDialog;
     MediaMetadataRetriever mediaMetadataRetriever;
+    Resources r;
 
-    public ProcessRequests(Context context) {
+    public ProcessRequests(Context context, Resources resources) {
         progressDialog = new ProgressDialog(context);
         progressDialog.setCancelable(false);
         progressDialog.setTitle("Processing");
         progressDialog.setMessage("Please wait...");
         mediaMetadataRetriever = new MediaMetadataRetriever();
-    }
-
-    public Bitmap toGrayscale(Bitmap bmpOriginal) {
-        int width, height;
-        height = bmpOriginal.getHeight();
-        width = bmpOriginal.getWidth();
-
-        Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(bmpGrayscale);
-        Paint paint = new Paint();
-        ColorMatrix cm = new ColorMatrix();
-        cm.setSaturation(0);
-        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
-        paint.setColorFilter(f);
-        c.drawBitmap(bmpOriginal, 0, 0, paint);
-        return bmpGrayscale;
+        r = resources;
     }
 
     public void processFramesInBackground(String inputSource, GetScoreCallback scoreCallback) {
@@ -52,7 +45,6 @@ public class ProcessRequests {
     }
 
     public class processFramesAsyncTask extends AsyncTask<Void, Void, Integer> {
-        Bitmap input;
         GetScoreCallback scoreCallback;
         String inputSource;
 
@@ -66,18 +58,20 @@ public class ProcessRequests {
         @Override
         protected Integer doInBackground(Void... params) {
             Bitmap image = null;
-            int score = 0;
+            int[] results;
+            float score = 0;
 
-            for (int i = 1; i <= 10; i++) {
-                image = mediaMetadataRetriever.getFrameAtTime(i * 1000000); //unit in microsecond
+            for (int i = 0; i < 100; i++) {
+                image = mediaMetadataRetriever.getFrameAtTime(1000000 + i*100000); //unit in microsecond
                 try {
-                    score += processFrame.processFrame(image);
+                    results = processFrame.processFrame(image);
+                    score += calculate(i, results);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
 
-            return score;
+            return (int) (100 - score/100);
         }
 
         @Override
@@ -86,6 +80,22 @@ public class ProcessRequests {
             scoreCallback.done(score);
             super.onPostExecute(score);
         }
+    }
+
+    public float calculate(int i, int[] results){
+        float diff = 0;
+        int[] coordinates = r.getIntArray(R.array.f001+i);
+
+        float one = results[1] - coordinates[0];
+        float two = results[2] - coordinates[1];
+        float three = results[4] - coordinates[2];
+        float four = results[5] - coordinates[3];
+
+        diff = (abs(one/results[1]) + abs(two/results[2]) + abs(three/results[4]) + abs(four/results[5]));
+
+        Log.i("i", "" + i + " " + diff);
+
+        return diff;
     }
 }
 

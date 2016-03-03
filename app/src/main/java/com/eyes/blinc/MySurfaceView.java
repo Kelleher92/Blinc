@@ -58,12 +58,8 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
                                int height) {
         mCamera.setPreviewCallback(new Camera.PreviewCallback() {
             public void onPreviewFrame(byte[] _data, Camera _camera) {
-                Log.d("SurfaceChanged", String.format("Got %d bytes of camera data", _data.length));
                 count++;
-                Log.i("SurfaceChanged", "Frame " + count);
-
-                if (count == 170) {
-                    Log.i("SurfaceChanged", "count = 150");
+                if (count == 180) {
                     mMediaRecorder.stop();
                     shutdown();
                 }
@@ -125,7 +121,7 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         Method[] methods = mMediaRecorder.getClass().getMethods();
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mMediaRecorder.setVideoFrameRate(24);
+        mMediaRecorder.setVideoFrameRate(18);
         mMediaRecorder.setVideoSize(720, 480);
 
         for (Method method: methods){

@@ -27,9 +27,7 @@ public class processFrame {
     static float myEyesDistance;
     static int[] score;
 
-    public static int processFrame(Bitmap image) throws IOException {
-        Log.i("START", "now");
-
+    public static int[] processFrame(Bitmap image) throws IOException {
         myFace = new FaceDetector.Face[1];
         myFaceDetect = new FaceDetector(image.getWidth(), image.getHeight(), 1);
         myFaceDetect.findFaces(image, myFace);
@@ -70,20 +68,15 @@ public class processFrame {
 
         score = circleHoughObject.process();
 
-        orig = circleHoughObject.draw();
+//        orig = circleHoughObject.draw();
+//
+//        int[] array = overlayImage(orig, image, height, width);
+//
+//        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+//
+//        bitmap.setPixels(array, 0, width, 0, 0, width, height);
 
-        int[] array = overlayImage(orig, image, height, width);
-
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-
-        bitmap.setPixels(array, 0, width, 0, 0, width, height);
-
-        int total = 0;
-        for (int i = 0; i < score.length; i++){
-            total += score[i];
-        }
-
-        return total;
+        return score;
     }
 
     public static int[] overlayImage(int[] input, Bitmap image, int height, int width) {
