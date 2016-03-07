@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.media.FaceDetector;
 import android.util.Log;
@@ -22,31 +23,25 @@ public class processFrame {
     static nonmax nonMaxSuppressionObject;
     static circleHough circleHoughObject;
     static hystThresh hystThreshObject;
-    static FaceDetector myFaceDetect;
-    static FaceDetector.Face[] myFace;
-    static float myEyesDistance;
-    static int[] score;
+    static int[] results;
 
-    public static int[] processFrame(Bitmap image) throws IOException {
-        myFace = new FaceDetector.Face[1];
-        myFaceDetect = new FaceDetector(image.getWidth(), image.getHeight(), 1);
-        myFaceDetect.findFaces(image, myFace);
-
-        PointF myMidPoint = new PointF();
-        myFace[0].getMidPoint(myMidPoint);
-        myEyesDistance = myFace[0].eyesDistance();
+    public static float[] processFrame(Bitmap frame, int i, PointF myMidPoint, float myEyesDistance) throws IOException {
+        float [] score = {0,0,0,0};
 
         int radius = (int) (myEyesDistance/11);
 
-        image = toGrayscale(Bitmap.createBitmap(image, (int) (myMidPoint.x - myEyesDistance/1.5), (int) (myMidPoint.y - myEyesDistance/4), (int) (myEyesDistance*1.5), (int) myEyesDistance/2));
+        Bitmap image = toGrayscale(Bitmap.createBitmap(frame, (int) (myMidPoint.x - myEyesDistance/1.5), (int) (myMidPoint.y - myEyesDistance/3), (int) (myEyesDistance*1.5), (int) myEyesDistance/2));
+
+        int height = image.getHeight();
+        int width = image.getWidth();
+
+        float centreX = (myMidPoint.x - (int) (myMidPoint.x - myEyesDistance/1.5));
+        float centreY = (myMidPoint.y - (int) (myMidPoint.y - myEyesDistance/3));
 
         sobelObject = new sobel();
         nonMaxSuppressionObject = new nonmax();
         hystThreshObject = new hystThresh();
         circleHoughObject = new circleHough();
-
-        int height = image.getHeight();
-        int width = image.getWidth();
 
         int[] orig = new int[width * height];
 
@@ -54,7 +49,7 @@ public class processFrame {
 
         sobelObject.init(orig, width, height);
         orig = sobelObject.process();
-        double direction[] = new double[width * height];
+        double direction[];
         direction = sobelObject.getDirection();
 
         nonMaxSuppressionObject.init(orig, direction, width, height);
@@ -66,7 +61,19 @@ public class processFrame {
 
         circleHoughObject.init(orig, width, height, radius);
 
-        score = circleHoughObject.process();
+        results = circleHoughObject.process();
+
+        score[0] = centreX - results[1];
+        score[1] = centreY - results[2];
+        score[2] = centreX - results[4];
+        score[3] = centreY - results[5];
+
+//        score[0] = results[1];
+//        score[1] = results[2];
+//        score[2] = results[4];
+//        score[3] = results[5];
+
+        Log.i("scores", "<integer-array name=\"f00" + i +"\"" + "><item>" + score[0] + "</item><item>" + score[1] + "</item><item>" + score[2] + "</item><item>" + score[3] + "</item></integer-array>");
 
 //        orig = circleHoughObject.draw();
 //
@@ -75,25 +82,29 @@ public class processFrame {
 //        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 //
 //        bitmap.setPixels(array, 0, width, 0, 0, width, height);
+//
+//        Paint paint = new Paint();
+//        Canvas canvas = new Canvas(bitmap);
+//        canvas.drawPoint(centreX, centreY, paint);
 
         return score;
     }
 
-    public static int[] overlayImage(int[] input, Bitmap image, int height, int width) {
-
-        int[] myImage = new int[width * height];
-
-        image.getPixels(myImage, 0, width, 0, 0, width, height);
-
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                if ((input[y * width + x] & 0xff) > 0)
-                    myImage[y * width + x] = 0x00ff0000;
-            }
-        }
-
-        return myImage;
-    }
+//    public static int[] overlayImage(int[] input, Bitmap image, int height, int width) {
+//
+//        int[] myImage = new int[width * height];
+//
+//        image.getPixels(myImage, 0, width, 0, 0, width, height);
+//
+//        for (int x = 0; x < width; x++) {
+//            for (int y = 0; y < height; y++) {
+//                if ((input[y * width + x] & 0xff) > 0)
+//                    myImage[y * width + x] = 0x00ff0000;
+//            }
+//        }
+//
+//        return myImage;
+//    }
 
     public static Bitmap toGrayscale(Bitmap bmpOriginal) {
         int width, height;

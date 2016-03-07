@@ -69,11 +69,5 @@ public class hystThresh {
                 }
             }
         }
-
     }
-
-    public int getProgress() {
-        return progress;
-    }
-
 }

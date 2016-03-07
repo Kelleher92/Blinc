@@ -8,6 +8,8 @@ import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
+import android.graphics.PointF;
+import android.media.FaceDetector;
 import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
@@ -52,19 +54,28 @@ public class ProcessRequests {
             this.inputSource = inputSource;
             this.scoreCallback = scoreCallback;
             mediaMetadataRetriever.setDataSource(inputSource);
-
         }
 
         @Override
         protected Integer doInBackground(Void... params) {
             Bitmap image = null;
-            int[] results;
+            float[] results;
             float score = 0;
+            FaceDetector myFaceDetect;
+            FaceDetector.Face[] myFace;
 
-            for (int i = 0; i < 100; i++) {
-                image = mediaMetadataRetriever.getFrameAtTime(1000000 + i*100000); //unit in microsecond
+            Bitmap frame = mediaMetadataRetriever.getFrameAtTime(1000000);
+            myFace = new FaceDetector.Face[1];
+            myFaceDetect = new FaceDetector(frame.getWidth(), frame.getHeight(), 1);
+            myFaceDetect.findFaces(frame, myFace);
+            PointF myMidPoint = new PointF();
+            myFace[0].getMidPoint(myMidPoint);
+            float myEyesDistance = myFace[0].eyesDistance();
+
+            for (int i = 1; i < 101; i++) {
+                image = mediaMetadataRetriever.getFrameAtTime(1000000 + i*100000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC); //unit in microsecond
                 try {
-                    results = processFrame.processFrame(image);
+                    results = processFrame.processFrame(image, i, myMidPoint, myEyesDistance);
                     score += calculate(i, results);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -82,18 +93,16 @@ public class ProcessRequests {
         }
     }
 
-    public float calculate(int i, int[] results){
+    public float calculate(int i, float[] results){
         float diff = 0;
-        int[] coordinates = r.getIntArray(R.array.f001+i);
+        int[] coordinates = r.getIntArray(R.array.f001+i-1);
 
-        float one = results[1] - coordinates[0];
-        float two = results[2] - coordinates[1];
-        float three = results[4] - coordinates[2];
-        float four = results[5] - coordinates[3];
+        float one = results[0] - coordinates[0];
+        float two = results[1] - coordinates[1];
+        float three = results[2] - coordinates[2];
+        float four = results[3] - coordinates[3];
 
-        diff = (abs(one/results[1]) + abs(two/results[2]) + abs(three/results[4]) + abs(four/results[5]));
-
-        Log.i("i", "" + i + " " + diff);
+        diff = (abs(one/coordinates[0]) + abs(two/coordinates[1]) + abs(three/coordinates[2]) + abs(four/coordinates[3]));
 
         return diff;
     }
