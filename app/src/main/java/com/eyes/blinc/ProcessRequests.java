@@ -97,10 +97,10 @@ public class ProcessRequests {
         float diff = 0;
         int[] coordinates = r.getIntArray(R.array.f001+i-1);
 
-        float one = results[0] - coordinates[0];
-        float two = results[1] - coordinates[1];
-        float three = results[2] - coordinates[2];
-        float four = results[3] - coordinates[3];
+        float one = abs(results[0]) - abs(coordinates[0]);
+        float two = abs(results[1]) - abs(coordinates[1]);
+        float three = abs(results[2]) - abs(coordinates[2]);
+        float four = abs(results[3]) - abs(coordinates[3]);
 
         diff = (abs(one/coordinates[0]) + abs(two/coordinates[1]) + abs(three/coordinates[2]) + abs(four/coordinates[3]));
 

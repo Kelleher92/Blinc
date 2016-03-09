@@ -88,46 +88,32 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         super.getContext().startActivity(myIntent);
     }
 
-    private void configure(Camera camera) {
-        parameters = mCamera.getParameters();
-
-        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-
-        camera.setParameters(parameters);
-    }
-
     private void initRecorder(Surface surface) throws IOException {
         // It is very important to unlock the camera before doing setCamera
         // or it will results in a black preview
         if (mCamera == null) {
             mCamera = Camera.open(1);
-            configure(mCamera);
-            Camera.CameraInfo info = new Camera.CameraInfo();
-            Camera.getCameraInfo(1, info);
-            Log.i("can disable sound", " = " + info.canDisableShutterSound);
-            if (info.canDisableShutterSound) {
-                mCamera.enableShutterSound(false);
-            }
+            parameters = mCamera.getParameters();
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+            mCamera.setParameters(parameters);
             mCamera.unlock();
         }
 
         if (mMediaRecorder == null)
             mMediaRecorder = new MediaRecorder();
+
         mMediaRecorder.setPreviewDisplay(surface);
-
         mMediaRecorder.setCamera(mCamera);
-
 
         Method[] methods = mMediaRecorder.getClass().getMethods();
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mMediaRecorder.setVideoFrameRate(18);
         mMediaRecorder.setVideoSize(720, 480);
 
         for (Method method: methods){
             try{
                 if(method.getName().equals("setAudioEncodingBitRate")){
-                    method.invoke(mMediaRecorder,12200);
+                    method.invoke(mMediaRecorder, 12200);
                 }
                 else if(method.getName().equals("setVideoEncodingBitRate")){
                     method.invoke(mMediaRecorder, 3000000);
