@@ -30,8 +30,8 @@ public class Anim implements Runnable {
     private Bitmap dotBitmap;
     int i;
 
-    public Anim(SurfaceHolder holder, Resources resources, Context context) {
-        dot = new Dot();
+    public Anim(SurfaceHolder holder, Resources resources, Context context, int h, int w) {
+        dot = new Dot(h, w);
         this.surfaceHolder = holder;
         i = 0;
 

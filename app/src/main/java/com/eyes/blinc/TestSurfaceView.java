@@ -1,5 +1,6 @@
 package com.eyes.blinc;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -7,6 +8,7 @@ import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.media.MediaRecorder;
 import android.os.Environment;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -27,18 +29,27 @@ public class TestSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private final Resources resources;
     private Dot dot;
     private int count;
+    int height;
+    int width;
 
     public TestSurfaceView(Context context, Resources resources) {
         super(context);
         this.resources = resources;
         dot = null;
 
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        ((Activity) getContext()).getWindowManager()
+                .getDefaultDisplay()
+                .getMetrics(displaymetrics);
+        height = displaymetrics.heightPixels;
+        width = displaymetrics.widthPixels;
+
         getHolder().addCallback(this);
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        dot = new Dot(holder, resources, getContext());
+        dot = new Dot(holder, resources, getContext(), height, width);
         count = 0;
         dot.start();
     }

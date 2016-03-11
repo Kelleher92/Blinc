@@ -35,7 +35,7 @@ public class ImageActivity extends AppCompatActivity {
         processRequests.processFramesInBackground(picturePath, new GetScoreCallback() {
             @Override
             public void done(int returnedScore) {
-                if (returnedScore == 0) {
+                if (returnedScore < 0 || returnedScore > 100) {
                     scoreDisp.setText("ERROR");
                     Log.i("MyActivity", "No returned score");
                 } else {

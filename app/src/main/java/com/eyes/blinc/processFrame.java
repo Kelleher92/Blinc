@@ -18,6 +18,8 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.Timer;
 
+import static java.lang.Math.abs;
+
 public class processFrame {
     static sobel sobelObject;
     static nonmax nonMaxSuppressionObject;
@@ -25,18 +27,15 @@ public class processFrame {
     static hystThresh hystThreshObject;
     static int[] results;
 
-    public static float[] processFrame(Bitmap frame, int i, PointF myMidPoint, float myEyesDistance) throws IOException {
+    public static float[] processFrame(Bitmap frame, PointF myMidPoint, float myEyesDistance) throws IOException {
         float [] score = {0,0,0,0};
 
         int radius = (int) (myEyesDistance/11);
 
-        Bitmap image = toGrayscale(Bitmap.createBitmap(frame, (int) (myMidPoint.x - myEyesDistance/1.5), (int) (myMidPoint.y - myEyesDistance/3), (int) (myEyesDistance*1.5), (int) myEyesDistance/2));
+        Bitmap image = toGrayscale(Bitmap.createBitmap(frame, (int) (myMidPoint.x - myEyesDistance / 1.5), (int) (myMidPoint.y - myEyesDistance / 3), (int) (myEyesDistance * 1.5), (int) myEyesDistance / 2));
 
         int height = image.getHeight();
         int width = image.getWidth();
-
-        float centreX = (myMidPoint.x - (int) (myMidPoint.x - myEyesDistance/1.5));
-        float centreY = (myMidPoint.y - (int) (myMidPoint.y - myEyesDistance/3));
 
         sobelObject = new sobel();
         nonMaxSuppressionObject = new nonmax();
@@ -63,17 +62,15 @@ public class processFrame {
 
         results = circleHoughObject.process();
 
-        score[0] = centreX - results[1];
-        score[1] = centreY - results[2];
-        score[2] = centreX - results[4];
-        score[3] = centreY - results[5];
+        score[0] = myEyesDistance * abs(myMidPoint.x - results[1]);
+        score[1] = myEyesDistance * abs(myMidPoint.y - results[2]);
+        score[2] = myEyesDistance * abs(myMidPoint.x - results[4]);
+        score[3] = myEyesDistance * abs(myMidPoint.y - results[5]);
 
 //        score[0] = results[1];
 //        score[1] = results[2];
 //        score[2] = results[4];
 //        score[3] = results[5];
-
-        Log.i("scores", "<integer-array name=\"f00" + i +"\"" + "><item>" + score[0] + "</item><item>" + score[1] + "</item><item>" + score[2] + "</item><item>" + score[3] + "</item></integer-array>");
 
 //        orig = circleHoughObject.draw();
 //

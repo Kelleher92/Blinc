@@ -31,22 +31,19 @@ public class ProcessRequests {
     ProgressDialog progressDialog;
     MediaMetadataRetriever mediaMetadataRetriever;
     Resources r;
+    Context context;
 
-    public ProcessRequests(Context context, Resources resources) {
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setCancelable(false);
-        progressDialog.setTitle("Processing");
-        progressDialog.setMessage("Please wait...");
+    public ProcessRequests(Context c, Resources resources) {
+        context = c;
         mediaMetadataRetriever = new MediaMetadataRetriever();
         r = resources;
     }
 
     public void processFramesInBackground(String inputSource, GetScoreCallback scoreCallback) {
-        progressDialog.show();
         new processFramesAsyncTask(inputSource, scoreCallback).execute();
     }
 
-    public class processFramesAsyncTask extends AsyncTask<Void, Void, Integer> {
+    public class processFramesAsyncTask extends AsyncTask<Void, Integer, Integer> {
         GetScoreCallback scoreCallback;
         String inputSource;
 
@@ -57,9 +54,23 @@ public class ProcessRequests {
         }
 
         @Override
+        protected void onPreExecute() {
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setCancelable(false);
+            progressDialog.setTitle("Processing");
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setMessage("Please wait...");
+            progressDialog.setIndeterminate(false);
+            progressDialog.setCancelable(false);
+            progressDialog.setMax(100);
+            progressDialog.setProgress(0);
+            progressDialog.show();
+        }
+
+        @Override
         protected Integer doInBackground(Void... params) {
             Bitmap image = null;
-            float[] results;
+            float[] results = null;
             float score = 0;
             FaceDetector myFaceDetect;
             FaceDetector.Face[] myFace;
@@ -73,16 +84,23 @@ public class ProcessRequests {
             float myEyesDistance = myFace[0].eyesDistance();
 
             for (int i = 1; i < 101; i++) {
+                publishProgress(i);
                 image = mediaMetadataRetriever.getFrameAtTime(1000000 + i*100000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC); //unit in microsecond
                 try {
-                    results = processFrame.processFrame(image, i, myMidPoint, myEyesDistance);
+                    results = processFrame.processFrame(image, myMidPoint, myEyesDistance);
                     score += calculate(i, results);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+            return (int) (100 - score);
+        }
 
-            return (int) (100 - score/100);
+        @Override
+        protected void onProgressUpdate(Integer... values)
+        {
+            //set the current progress of the progress dialog
+            progressDialog.setProgress(values[0]);
         }
 
         @Override
@@ -93,18 +111,26 @@ public class ProcessRequests {
         }
     }
 
-    public float calculate(int i, float[] results){
+    public int calculate(int i, float[] results){
         float diff = 0;
         int[] coordinates = r.getIntArray(R.array.f001+i-1);
 
-        float one = abs(results[0]) - abs(coordinates[0]);
-        float two = abs(results[1]) - abs(coordinates[1]);
-        float three = abs(results[2]) - abs(coordinates[2]);
-        float four = abs(results[3]) - abs(coordinates[3]);
+        float one = abs(results[0] - coordinates[0]);
+        float two = abs(results[1] - coordinates[0]);
+        float three = abs(results[2] - coordinates[0]);
+        float four = abs(results[3] - coordinates[0]);
 
-        diff = (abs(one/coordinates[0]) + abs(two/coordinates[1]) + abs(three/coordinates[2]) + abs(four/coordinates[3]));
+        diff = (one + two + three + four)/4;
 
-        return diff;
+        //Log.i("score", "<integer-array name=\"f00" + i +"\"" + "><item>" + one + "</item><item>" + two + "</item><item>" + three + "</item><item>" + four + "</item></integer-array>");
+
+        Log.i("score", "" + one + " " + two + " " + three + " " + four + " " + diff);
+
+        if (diff > 4500)
+            return 1;
+        else
+            return 0;
+
     }
 }
 
