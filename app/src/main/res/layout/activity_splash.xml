@@ -22,25 +22,20 @@
             android:background="@color/black_overlay" android:orientation="horizontal"
             tools:ignore="UselessParent">
 
-            <Button android:id="@+id/start_button" style="?metaButtonBarButtonStyle"
-                android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_weight="1" android:text="START"
-                android:textColor="#ffffff"
-                android:textSize="40dp"
-                android:clickable="true"
-                android:onClick="goHome" />
-
         </LinearLayout>
 
         <TextView
-            android:layout_width="329dp"
-            android:layout_height="160dp"
+            android:layout_width="442dp"
+            android:layout_height="239dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="FOLLOW THE DOT WITH YOUR EYES"
+            android:text="POSITION FACE, PRESS START AND FOLLOW THE DOT WITH YOUR EYES"
             android:id="@+id/textView"
             android:layout_gravity="center"
             android:textColor="#ffffff"
-            android:textSize="40dp" />
+            android:textSize="50dp"
+            android:elegantTextHeight="false"
+            android:textAlignment="center"
+            android:singleLine="false" />
 
     </FrameLayout>
 

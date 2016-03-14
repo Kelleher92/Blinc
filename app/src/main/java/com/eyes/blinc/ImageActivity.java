@@ -14,11 +14,7 @@ import android.widget.EditText;
  */
 
 public class ImageActivity extends AppCompatActivity {
-
-    int RESULT_LOAD_IMAGE = 1;
     EditText scoreDisp;
-    final int score = 0;
-    String result;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,7 +24,6 @@ public class ImageActivity extends AppCompatActivity {
 
         String picturePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/myvideo.mp4";
 
-        Bitmap image = null;
         scoreDisp = (EditText) this.findViewById(R.id.editText);
 
         ProcessRequests processRequests = new ProcessRequests(this, this.getResources());
