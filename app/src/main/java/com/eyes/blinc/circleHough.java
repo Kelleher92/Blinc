@@ -1,17 +1,17 @@
 package com.eyes.blinc;
 
+import java.util.Arrays;
+
 /**
  * Created by Ian on 03-Feb-16.
  */
 
 public class circleHough {
-
     int[] input;
     int[] output;
     int width;
     int height;
     int[] acc;
-    int accSize = 2;
     int[] results, resultsRight, resultsLeft;
     int r;
     int threshold;
@@ -25,32 +25,17 @@ public class circleHough {
         input = inputIn;
         threshold = width / 2;
 
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                output[x + (width * y)] = 0xff000000;
-            }
-        }
-
+        Arrays.fill(output, 0xff000000);
     }
 
     // hough transform for lines (polar), returns the accumulator array
-
     public int[] process() {
-
-        // for polar we need accumulator of 180degrees * the longest length in the image
-        int rmax = (int) Math.sqrt(width * width + height * height);
         acc = new int[width * height];
 
-        // zero accumulator array
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                acc[x * height + y] = 0;
-            }
-        }
+        Arrays.fill(acc, 0);
 
         int x0, y0;
         double t;
-
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 if ((input[y * width + x] & 0xff) == 255) {
@@ -93,53 +78,23 @@ public class circleHough {
     }
 
     private int[] findMaxima() {
-        resultsRight = new int[(accSize * 3)];
-        resultsLeft = new int[(accSize * 3)];
+        resultsRight = new int[3];
+        resultsLeft = new int[3];
         results = new int[6];
-
-        int[] output = new int[width * height];
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 int value = (acc[x + (y * width)] & 0xff);
 
-                // if its higher than lowest value add it and then sort
-                if ((value > resultsRight[(accSize - 1) * 3]) && (x > threshold)) {
-
-                    // add to bottom of array
-                    resultsRight[(accSize - 1) * 3] = value;
-                    resultsRight[(accSize - 1) * 3 + 1] = x;
-                    resultsRight[(accSize - 1) * 3 + 2] = y;
-
-                    // shift up until its in right place
-                    int i = (accSize - 2) * 3;
-                    while ((i >= 0) && (resultsRight[i + 3] > resultsRight[i])) {
-                        for (int j = 0; j < 3; j++) {
-                            int temp = resultsRight[i + j];
-                            resultsRight[i + j] = resultsRight[i + 3 + j];
-                            resultsRight[i + 3 + j] = temp;
-                        }
-                        i = i - 3;
-                        if (i < 0) break;
-                    }
-                } else if ((value > resultsLeft[(accSize - 1) * 3] && (x < threshold))) {
-
-                    // add to bottom of array
-                    resultsLeft[(accSize - 1) * 3] = value;
-                    resultsLeft[(accSize - 1) * 3 + 1] = x;
-                    resultsLeft[(accSize - 1) * 3 + 2] = y;
-
-                    // shift up until its in right place
-                    int i = (accSize - 2) * 3;
-                    while ((i >= 0) && (resultsLeft[i + 3] > resultsLeft[i])) {
-                        for (int j = 0; j < 3; j++) {
-                            int temp = resultsLeft[i + j];
-                            resultsLeft[i + j] = resultsLeft[i + 3 + j];
-                            resultsLeft[i + 3 + j] = temp;
-                        }
-                        i = i - 3;
-                        if (i < 0) break;
-                    }
+                if ((value > resultsRight[0]) && (x > threshold)) {
+                    resultsRight[0] = value;
+                    resultsRight[1] = x;
+                    resultsRight[2] = y;
+                }
+                else if ((value > resultsLeft[0] && (x < threshold))) {
+                    resultsLeft[0] = value;
+                    resultsLeft[1] = x;
+                    resultsLeft[2] = y;
                 }
             }
         }
@@ -152,20 +107,13 @@ public class circleHough {
         results[4] = resultsLeft[1];
         results[5] = resultsLeft[2];
 
-        for (int i = accSize - 1; i >= 0; i--) {
-            //Log.i("results", " " + results[i * 3] + " " + results[i * 3 + 1] + " " + results[i * 3 + 2]);
-            drawCircle(results[i * 3], results[i * 3 + 1], results[i * 3 + 2]);
-        }
-
         return results;
     }
 
-    private void setCentre(int xPos, int yPos) {
-        output[(yPos * width) + xPos] = -1;
-    }
-
-    // draw circle at x y
-    private void drawCircle(int pix, int xCenter, int yCenter) {
-        setCentre(xCenter, yCenter);
-    }
+//    public int[] draw() {
+//        output[(results[2] * width) + results[1]] = -1;
+//        output[(results[5] * width) + results[4]] = -1;
+//
+//        return output;
+//    }
 }

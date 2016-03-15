@@ -5,11 +5,9 @@ package com.eyes.blinc;
  */
 
 public class sobel {
-
     int[] input;
     int[] output;
     float[] template = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
-    int templateSize = 3;
     int width;
     int height;
     double[] direction;
@@ -30,31 +28,29 @@ public class sobel {
         int sum;
         int max = 0;
 
-        for (int x = (templateSize - 1) / 2; x < width - (templateSize + 1) / 2; x++) {
-            for (int y = (templateSize - 1) / 2; y < height - (templateSize + 1) / 2; y++) {
+        for (int x = 1; x < width - 2; x++) {
+            for (int y = 1; y < height - 2; y++) {
                 sum = 0;
-
-                for (int x1 = 0; x1 < templateSize; x1++) {
-                    for (int y1 = 0; y1 < templateSize; y1++) {
-                        int x2 = (x - (templateSize - 1) / 2 + x1);
-                        int y2 = (y - (templateSize - 1) / 2 + y1);
-                        float value = (input[y2 * width + x2] & 0xff) * (template[y1 * templateSize + x1]);
+                for (int x1 = 0; x1 < 3; x1++) {
+                    for (int y1 = 0; y1 < 3; y1++) {
+                        int x2 = (x - 1 + x1);
+                        int y2 = (y - 1 + y1);
+                        float value = (input[y2 * width + x2] & 0xff) * (template[y1 * 3 + x1]);
                         sum += value;
                     }
                 }
 
                 GY[y * width + x] = sum;
 
-                for (int x1 = 0; x1 < templateSize; x1++) {
-                    for (int y1 = 0; y1 < templateSize; y1++) {
-                        int x2 = (x - (templateSize - 1) / 2 + x1);
-                        int y2 = (y - (templateSize - 1) / 2 + y1);
-                        float value = (input[y2 * width + x2] & 0xff) * (template[x1 * templateSize + y1]);
+                for (int x1 = 0; x1 < 3; x1++) {
+                    for (int y1 = 0; y1 < 3; y1++) {
+                        int x2 = (x - 1 + x1);
+                        int y2 = (y - 1 + y1);
+                        float value = (input[y2 * width + x2] & 0xff) * (template[x1 * 3 + y1]);
                         sum += value;
                     }
                 }
                 GX[y * width + x] = sum;
-
             }
         }
 
@@ -72,10 +68,9 @@ public class sobel {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 sum = (int) (total[y * width + x] / ratio);
-                output[y * width + x] = 0xff000000 | ((int) sum << 16 | (int) sum << 8 | (int) sum);
+                output[y * width + x] = 0xff000000 | ( sum << 16 | sum << 8 | sum);
             }
         }
-
         return output;
     }
 

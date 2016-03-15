@@ -11,7 +11,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.IOException;
-
 import static java.lang.Math.abs;
 
 /**
@@ -59,8 +58,9 @@ public class ProcessRequests {
 
         @Override
         protected Integer doInBackground(Void... params) {
-            Bitmap image = null;
-            float[] results = null;
+            Bitmap image;
+            float[] results;
+            float[] first = {0,0,0,0};
             float score = 0;
             FaceDetector myFaceDetect;
             FaceDetector.Face[] myFace;
@@ -73,12 +73,19 @@ public class ProcessRequests {
             myFace[0].getMidPoint(myMidPoint);
             float myEyesDistance = myFace[0].eyesDistance();
 
+            image = mediaMetadataRetriever.getFrameAtTime(1000000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC); //unit in microsecond
+            try {
+                first = processFrame.processFrame(image, myMidPoint, myEyesDistance);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             for (int i = 1; i < 101; i++) {
                 publishProgress(i);
                 image = mediaMetadataRetriever.getFrameAtTime(1000000 + i * 100000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC); //unit in microsecond
                 try {
                     results = processFrame.processFrame(image, myMidPoint, myEyesDistance);
-                    score += calculate(i, results);
+                    score += calculate(i, results, first);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -100,22 +107,20 @@ public class ProcessRequests {
         }
     }
 
-    public int calculate(int i, float[] results) {
-        float diff = 0;
+    public int calculate(int i, float[] results, float[] first) {
+        float diff;
         int[] coordinates = r.getIntArray(R.array.f001 + i - 1);
 
-        float one = abs(results[0] - coordinates[0]);
-        float two = abs(results[1] - coordinates[0]);
-        float three = abs(results[2] - coordinates[0]);
-        float four = abs(results[3] - coordinates[0]);
+        float one = abs(coordinates[0] - (100*abs(results[0] - first[0])));
+        float two = abs(coordinates[1] - (100*abs(results[1] - first[1])));
+        float three = abs(coordinates[2] - (100*abs(results[2] - first[2])));
+        float four = abs(coordinates[3] - (100*abs(results[3] - first[3])));
 
-        diff = (one + two + three + four) / 4;
-
-        //Log.i("score", "<integer-array name=\"f00" + i +"\"" + "><item>" + one + "</item><item>" + two + "</item><item>" + three + "</item><item>" + four + "</item></integer-array>");
+        diff = one + two + three + four;
 
         Log.i("score", "" + one + " " + two + " " + three + " " + four + " " + diff);
 
-        if (diff > 5000)
+        if (diff > 500)
             return 1;
         else
             return 0;
