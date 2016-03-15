@@ -2,24 +2,10 @@ package com.eyes.blinc;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.PixelFormat;
-import android.hardware.Camera;
-import android.media.MediaRecorder;
-import android.os.Environment;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.widget.Button;
-import android.widget.RelativeLayout;
-import android.widget.ToggleButton;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by Ian on 08-Feb-16.

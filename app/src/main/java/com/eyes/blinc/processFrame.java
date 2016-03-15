@@ -6,17 +6,12 @@ package com.eyes.blinc;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
-import android.graphics.Paint.Style;
 import android.graphics.PointF;
-import android.media.FaceDetector;
-import android.util.Log;
 
 import java.io.IOException;
-import java.util.Timer;
 
 import static java.lang.Math.abs;
 
@@ -28,9 +23,9 @@ public class processFrame {
     static int[] results;
 
     public static float[] processFrame(Bitmap frame, PointF myMidPoint, float myEyesDistance) throws IOException {
-        float [] score = {0,0,0,0};
+        float[] score = {0, 0, 0, 0};
 
-        int radius = (int) (myEyesDistance/11);
+        int radius = (int) (myEyesDistance / 11);
 
         Bitmap image = toGrayscale(Bitmap.createBitmap(frame, (int) (myMidPoint.x - myEyesDistance / 1.5), (int) (myMidPoint.y - myEyesDistance / 3), (int) (myEyesDistance * 1.5), (int) myEyesDistance / 2));
 

@@ -1,22 +1,13 @@
 package com.eyes.blinc;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.hardware.Camera;
-import android.media.MediaRecorder;
-import android.os.Environment;
-import android.util.Log;
-import android.view.Surface;
 import android.view.SurfaceHolder;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by Ian on 08-Feb-16.

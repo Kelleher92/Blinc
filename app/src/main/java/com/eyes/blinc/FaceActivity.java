@@ -2,16 +2,13 @@ package com.eyes.blinc;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -40,8 +37,6 @@ public final class FaceActivity extends AppCompatActivity {
     int height = 240;
     private CameraSourcePreview mPreview;
     private GraphicOverlay mGraphicOverlay;
-    private Rect rect;
-    private boolean running;
     private static final int RC_HANDLE_GMS = 9001;
     // permission request codes need to be < 256
     private static final int RC_HANDLE_CAMERA_PERM = 2;
@@ -95,14 +90,6 @@ public final class FaceActivity extends AppCompatActivity {
         }
 
         final Activity thisActivity = this;
-
-        View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ActivityCompat.requestPermissions(thisActivity, permissions,
-                        RC_HANDLE_CAMERA_PERM);
-            }
-        };
 
     }
 
@@ -160,8 +147,6 @@ public final class FaceActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        running = false;
-
         mPreview.stop();
     }
 
@@ -172,8 +157,6 @@ public final class FaceActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        running = false;
-
         if (mCameraSource != null) {
             mCameraSource.release();
         }
@@ -231,8 +214,6 @@ public final class FaceActivity extends AppCompatActivity {
      * again when the camera source is created.
      */
     private void startCameraSource() {
-        running = true;
-
         // check that the device has play services available.
         int code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(
                 getApplicationContext());

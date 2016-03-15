@@ -8,15 +8,10 @@ public class hystThresh {
 
     static int[] input;
     static int[] output;
-    int progress;
     int width;
     int height;
     static int lower;
     static int upper;
-
-    public void hystThresh() {
-        progress = 0;
-    }
 
     public void init(int[] inputIn, int widthIn, int heightIn, int lowerIn, int upperIn) {
         width = widthIn;
@@ -29,9 +24,7 @@ public class hystThresh {
     }
 
     public int[] process() {
-        progress = 0;
         for (int x = 0; x < width; x++) {
-            progress++;
             for (int y = 0; y < height; y++) {
                 int value = (input[y * width + x]) & 0xff;
                 if (value >= upper) {
@@ -53,7 +46,7 @@ public class hystThresh {
     }
 
     private void hystConnect(int x, int y) {
-        int value = 0;
+        int value;
         for (int x1 = x - 1; x1 <= x + 1; x1++) {
             for (int y1 = y - 1; y1 <= y + 1; y1++) {
                 if ((x1 < width) & (y1 < height) & (x1 >= 0) & (y1 >= 0) & (x1 != x) & (y1 != y)) {

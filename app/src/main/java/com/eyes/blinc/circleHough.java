@@ -1,7 +1,5 @@
 package com.eyes.blinc;
 
-import android.util.Log;
-
 /**
  * Created by Ian on 03-Feb-16.
  */
@@ -10,9 +8,6 @@ public class circleHough {
 
     int[] input;
     int[] output;
-    float[] template = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
-
-    double progress;
     int width;
     int height;
     int[] acc;
@@ -20,10 +15,6 @@ public class circleHough {
     int[] results, resultsRight, resultsLeft;
     int r;
     int threshold;
-
-    public void circleHough() {
-        progress = 0;
-    }
 
     public void init(int[] inputIn, int widthIn, int heightIn, int radius) {
         r = radius;
@@ -42,9 +33,6 @@ public class circleHough {
 
     }
 
-    public void setLines(int lines) {
-        accSize = lines;
-    }
     // hough transform for lines (polar), returns the accumulator array
 
     public int[] process() {
@@ -62,10 +50,8 @@ public class circleHough {
 
         int x0, y0;
         double t;
-        progress = 0;
 
         for (int x = 0; x < width; x++) {
-            progress += 0.5;
             for (int y = 0; y < height; y++) {
                 if ((input[y * width + x] & 0xff) == 255) {
                     for (int theta = 0; theta < 360; theta++) {
@@ -166,22 +152,12 @@ public class circleHough {
         results[4] = resultsLeft[1];
         results[5] = resultsLeft[2];
 
-        double ratio = (double) (width / 2) / accSize;
-
         for (int i = accSize - 1; i >= 0; i--) {
             //Log.i("results", " " + results[i * 3] + " " + results[i * 3 + 1] + " " + results[i * 3 + 2]);
             drawCircle(results[i * 3], results[i * 3 + 1], results[i * 3 + 2]);
         }
 
         return results;
-    }
-
-    public int[] draw() {
-        for (int i = accSize - 1; i >= 0; i--) {
-            drawCircle(results[i * 3], results[i * 3 + 1], results[i * 3 + 2]);
-        }
-
-        return output;
     }
 
     private void setCentre(int xPos, int yPos) {

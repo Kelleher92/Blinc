@@ -4,26 +4,26 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.google.android.gms.vision.CameraSource;
+
 import java.util.HashSet;
 import java.util.Set;
-import com.google.android.gms.vision.CameraSource;
 
 /**
  * A view which renders a series of custom graphics to be overlayed on top of an associated preview
  * (i.e., the camera preview).  The creator can add graphics objects, update the objects, and remove
  * them, triggering the appropriate drawing and invalidation within the view.<p>
- *
+ * <p/>
  * Supports scaling and mirroring of the graphics relative the camera's preview properties.  The
  * idea is that detection items are expressed in terms of a preview size, but need to be scaled up
  * to the full view size, and also mirrored in the case of the front-facing camera.<p>
- *
+ * <p/>
  * Associated {@link Graphic} items should use the following methods to convert to view coordinates
  * for the graphics that are drawn:
  * <ol>
  * <li>{@link Graphic#scaleX(float)} and {@link Graphic#scaleY(float)} adjust the size of the
  * supplied value from the preview scale to the view scale.</li>
- * <li>{@link Graphic#translateX(float)} and {@link Graphic#translateY(float)} adjust the coordinate
- * from the preview's coordinate system to the view coordinate system.</li>
  * </ol>
  */
 public class GraphicOverlay extends View {
@@ -53,8 +53,6 @@ public class GraphicOverlay extends View {
          * <ol>
          * <li>{@link Graphic#scaleX(float)} and {@link Graphic#scaleY(float)} adjust the size of
          * the supplied value from the preview scale to the view scale.</li>
-         * <li>{@link Graphic#translateX(float)} and {@link Graphic#translateY(float)} adjust the
-         * coordinate from the preview's coordinate system to the view coordinate system.</li>
          * </ol>
          *
          * @param canvas drawing canvas
@@ -92,10 +90,6 @@ public class GraphicOverlay extends View {
          * Adjusts the y coordinate from the preview's coordinate system to the view coordinate
          * system.
          */
-        public float translateY(float y) {
-            return scaleY(y);
-        }
-
         public void postInvalidate() {
             mOverlay.postInvalidate();
         }

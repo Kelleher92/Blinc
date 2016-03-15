@@ -4,23 +4,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Paint;
 import android.graphics.PointF;
 import android.media.FaceDetector;
 import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 
-import com.eyes.blinc.processFrame;
-
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.text.Format;
-import java.util.List;
 
 import static java.lang.Math.abs;
 
@@ -85,7 +75,7 @@ public class ProcessRequests {
 
             for (int i = 1; i < 101; i++) {
                 publishProgress(i);
-                image = mediaMetadataRetriever.getFrameAtTime(1000000 + i*100000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC); //unit in microsecond
+                image = mediaMetadataRetriever.getFrameAtTime(1000000 + i * 100000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC); //unit in microsecond
                 try {
                     results = processFrame.processFrame(image, myMidPoint, myEyesDistance);
                     score += calculate(i, results);
@@ -97,8 +87,7 @@ public class ProcessRequests {
         }
 
         @Override
-        protected void onProgressUpdate(Integer... values)
-        {
+        protected void onProgressUpdate(Integer... values) {
             //set the current progress of the progress dialog
             progressDialog.setProgress(values[0]);
         }
@@ -111,22 +100,22 @@ public class ProcessRequests {
         }
     }
 
-    public int calculate(int i, float[] results){
+    public int calculate(int i, float[] results) {
         float diff = 0;
-        int[] coordinates = r.getIntArray(R.array.f001+i-1);
+        int[] coordinates = r.getIntArray(R.array.f001 + i - 1);
 
         float one = abs(results[0] - coordinates[0]);
         float two = abs(results[1] - coordinates[0]);
         float three = abs(results[2] - coordinates[0]);
         float four = abs(results[3] - coordinates[0]);
 
-        diff = (one + two + three + four)/4;
+        diff = (one + two + three + four) / 4;
 
         //Log.i("score", "<integer-array name=\"f00" + i +"\"" + "><item>" + one + "</item><item>" + two + "</item><item>" + three + "</item><item>" + four + "</item></integer-array>");
 
         Log.i("score", "" + one + " " + two + " " + three + " " + four + " " + diff);
 
-        if (diff > 4500)
+        if (diff > 5000)
             return 1;
         else
             return 0;

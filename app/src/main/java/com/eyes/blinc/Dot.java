@@ -1,10 +1,7 @@
 package com.eyes.blinc;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
-import android.util.DisplayMetrics;
 import android.view.SurfaceHolder;
 
 /**
@@ -17,15 +14,15 @@ public class Dot {
     float x, y, vx, vy;
     int height, width, heightLimit, widthLimit;
 
-    public Dot(int h, int w){
+    public Dot(int h, int w) {
         height = h;
         width = w;
 
-        x = (float) (width/2.165);
-        y = (float) (height/2.3125);
+        x = (float) (width / 2.165);
+        y = (float) (height / 2.3125);
 
-        heightLimit = (int) (height/1.157);
-        widthLimit = (int) (width/1.0828);
+        heightLimit = (int) (height / 1.157);
+        widthLimit = (int) (width / 1.0828);
 
         vx = 7;
         vy = 7;

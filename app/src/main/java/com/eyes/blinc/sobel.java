@@ -9,16 +9,10 @@ public class sobel {
     int[] input;
     int[] output;
     float[] template = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
-    ;
-    int progress;
     int templateSize = 3;
     int width;
     int height;
     double[] direction;
-
-    public void sobel() {
-        progress = 0;
-    }
 
     public void init(int[] original, int widthIn, int heightIn) {
         width = widthIn;
@@ -33,12 +27,10 @@ public class sobel {
         float[] GY = new float[width * height];
         float[] GX = new float[width * height];
         int[] total = new int[width * height];
-        progress = 0;
-        int sum = 0;
+        int sum;
         int max = 0;
 
         for (int x = (templateSize - 1) / 2; x < width - (templateSize + 1) / 2; x++) {
-            progress++;
             for (int y = (templateSize - 1) / 2; y < height - (templateSize + 1) / 2; y++) {
                 sum = 0;
 
@@ -84,16 +76,11 @@ public class sobel {
             }
         }
 
-        progress = width;
         return output;
     }
 
     public double[] getDirection() {
         return direction;
-    }
-
-    public int getProgress() {
-        return progress;
     }
 
 }

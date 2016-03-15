@@ -6,8 +6,6 @@ import android.content.res.Resources;
 import android.hardware.Camera;
 import android.media.MediaRecorder;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -16,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.ByteBuffer;
 
 /**
  * Created by Ian on 08-Feb-16.
@@ -110,21 +107,18 @@ public class MySurfaceView extends SurfaceView implements SurfaceHolder.Callback
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         mMediaRecorder.setVideoSize(720, 480);
 
-        for (Method method: methods){
-            try{
-                if(method.getName().equals("setAudioEncodingBitRate")){
+        for (Method method : methods) {
+            try {
+                if (method.getName().equals("setAudioEncodingBitRate")) {
                     method.invoke(mMediaRecorder, 12200);
-                }
-                else if(method.getName().equals("setVideoEncodingBitRate")){
+                } else if (method.getName().equals("setVideoEncodingBitRate")) {
                     method.invoke(mMediaRecorder, 3000000);
+                } else if (method.getName().equals("setAudioSamplingRate")) {
+                    method.invoke(mMediaRecorder, 8000);
+                } else if (method.getName().equals("setVideoFrameRate")) {
+                    method.invoke(mMediaRecorder, 24);
                 }
-                else if(method.getName().equals("setAudioSamplingRate")){
-                    method.invoke(mMediaRecorder,8000);
-                }
-                else if(method.getName().equals("setVideoFrameRate")){
-                    method.invoke(mMediaRecorder,24);
-                }
-            }catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
 
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
