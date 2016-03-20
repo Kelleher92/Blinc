@@ -11,10 +11,11 @@ public class circleHough {
     int[] output;
     int width;
     int height;
-    int[] acc;
-    int[] results, resultsRight, resultsLeft;
+    int[] acc, results, resultsRight, resultsLeft;
     int r;
     int threshold;
+    int x0, y0, max, value;
+    double t;
 
     public void init(int[] inputIn, int widthIn, int heightIn, int radius) {
         r = radius;
@@ -31,11 +32,12 @@ public class circleHough {
     // hough transform for lines (polar), returns the accumulator array
     public int[] process() {
         acc = new int[width * height];
+        resultsRight = new int[3];
+        resultsLeft = new int[3];
+        results = new int[6];
 
         Arrays.fill(acc, 0);
 
-        int x0, y0;
-        double t;
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 if ((input[y * width + x] & 0xff) == 255) {
@@ -52,7 +54,7 @@ public class circleHough {
         }
 
         // now normalise to 255 and put in format for a pixel array
-        int max = 0;
+        max = 0;
 
         // Find max accumulator value (only 124)
         for (int x = 0; x < width; x++) {
@@ -64,7 +66,6 @@ public class circleHough {
         }
 
         // Normalise all the values
-        int value;
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 value = (int) (((double) acc[x + (y * width)] / (double) max) * 255.0);
@@ -78,10 +79,6 @@ public class circleHough {
     }
 
     private int[] findMaxima() {
-        resultsRight = new int[3];
-        resultsLeft = new int[3];
-        results = new int[6];
-
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 int value = (acc[x + (y * width)] & 0xff);
@@ -90,8 +87,7 @@ public class circleHough {
                     resultsRight[0] = value;
                     resultsRight[1] = x;
                     resultsRight[2] = y;
-                }
-                else if ((value > resultsLeft[0] && (x < threshold))) {
+                } else if ((value > resultsLeft[0] && (x < threshold))) {
                     resultsLeft[0] = value;
                     resultsLeft[1] = x;
                     resultsLeft[2] = y;

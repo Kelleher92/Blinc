@@ -8,9 +8,15 @@ import android.graphics.PointF;
 import android.media.FaceDetector;
 import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+
 import static java.lang.Math.abs;
 
 /**
@@ -120,7 +126,7 @@ public class ProcessRequests {
 
         Log.i("score", "" + one + " " + two + " " + three + " " + four + " " + diff);
 
-        if (diff > 500)
+        if (diff > 1000)
             return 1;
         else
             return 0;

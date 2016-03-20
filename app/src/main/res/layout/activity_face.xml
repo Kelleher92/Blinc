@@ -30,7 +30,7 @@
 
         <Button android:id="@+id/start_button" style="?metaButtonBarButtonStyle"
             android:layout_width="0dp" android:layout_height="wrap_content"
-            android:layout_weight="1" android:text="START"
+            android:layout_weight="1" android:text="PRESS TO START"
             android:textColor="#ffffff"
             android:textSize="30dp"
             android:clickable="true"

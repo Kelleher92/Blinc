@@ -14,7 +14,6 @@ import android.view.SurfaceView;
 public class TestSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
     private final Resources resources;
     private Dot dot;
-    private int count;
     int height;
     int width;
 
@@ -36,7 +35,6 @@ public class TestSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         dot = new Dot(holder, resources, getContext(), height, width);
-        count = 0;
         dot.start();
     }
 

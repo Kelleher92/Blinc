@@ -21,9 +21,7 @@ import android.widget.EditText;
  */
 
 public class ImageActivity extends AppCompatActivity {
-    EditText scoreDisp;
     Context context;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,9 +45,6 @@ public class ImageActivity extends AppCompatActivity {
         private final Paint progressPaint;
         private final Paint circlePaint;
         private final Paint textPaint;
-
-        private long startTime;
-        private long currentTime;
         private long maxTime;
 
         private long progressMillisecond;
@@ -78,6 +73,8 @@ public class ImageActivity extends AppCompatActivity {
             };
             this.setOnTouchListener(touch);
 
+            progressMillisecond = 0;
+
             // used to fit the circle into
             circleBounds = new RectF();
 
@@ -87,10 +84,6 @@ public class ImageActivity extends AppCompatActivity {
 
             // limit the counter to go up to maxTime ms
             maxTime = 10000;
-
-            // start and current time
-            startTime = System.currentTimeMillis();
-            currentTime = startTime;
 
             // the style of the background
             backgroundPaint = new Paint();
@@ -131,19 +124,14 @@ public class ImageActivity extends AppCompatActivity {
             updateView = new Runnable() {
                 @Override
                 public void run() {
-                    // update current time
-                    currentTime = System.currentTimeMillis();
+                    if (progressMillisecond < score*100) {
+                        progressMillisecond += 50;
 
-                    if (progressMillisecond <= score * 100) {
-                        // get elapsed time in milliseconds and clamp between <0, maxTime>
-                        progressMillisecond = (currentTime - startTime) % maxTime;
-
-                        // get current progress on a range <0, 1>
                         progress = (double) progressMillisecond / maxTime;
 
                         CircularCountdown.this.invalidate();
 
-                        viewHandler.postDelayed(updateView, 1000 / 60);
+                        viewHandler.postDelayed(updateView, 50);
                     }
                 }
             };
