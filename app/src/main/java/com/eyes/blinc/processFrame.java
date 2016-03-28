@@ -69,13 +69,6 @@ public class processFrame {
         score[1] = results[2];
         score[2] = results[4];
         score[3] = results[5];
-//
-//        orig = circleHoughObject.draw();
-//
-//        int[] array = overlayImage(orig, image, height, width);
-//
-//        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-//        bitmap.setPixels(array, 0, width, 0, 0, width, height);
 
         return score;
     }
