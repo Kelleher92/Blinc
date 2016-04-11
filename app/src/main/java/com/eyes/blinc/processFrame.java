@@ -60,11 +60,6 @@ public class processFrame {
         circleHoughObject.init(orig, width, height, radius);
         results = circleHoughObject.process();
 
-//        score[0] = myEyesDistance * abs(myMidPoint.x - results[1]);
-//        score[1] = myEyesDistance * abs(myMidPoint.y - results[2]);
-//        score[2] = myEyesDistance * abs(myMidPoint.x - results[4]);
-//        score[3] = myEyesDistance * abs(myMidPoint.y - results[5]);
-
         score[0] = results[1];
         score[1] = results[2];
         score[2] = results[4];
