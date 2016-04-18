@@ -117,21 +117,21 @@ public class ProcessRequests {
         float diff;
         int[] coordinates = r.getIntArray(R.array.f001 + i - 1);
 
-//        float one = abs(coordinates[0] - (100*abs(results[0] - first[0])));
-//        float two = abs(coordinates[1] - (100*abs(results[1] - first[1])));
-//        float three = abs(coordinates[2] - (100*abs(results[2] - first[2])));
-//        float four = abs(coordinates[3] - (100*abs(results[3] - first[3])));
+        float one = abs(coordinates[0] - (100*abs(results[0] - first[0])));
+        float two = abs(coordinates[1] - (100*abs(results[1] - first[1])));
+        float three = abs(coordinates[2] - (100*abs(results[2] - first[2])));
+        float four = abs(coordinates[3] - (100*abs(results[3] - first[3])));
 
-        float one = results[0] - first[0];
-        float two = results[1] - first[1];
-        float three = results[2] - first[2];
-        float four = results[3] - first[3];
+//        float one = results[0] - first[0];
+//        float two = results[1] - first[1];
+//        float three = results[2] - first[2];
+//        float four = results[3] - first[3];
 
         diff = abs(one) + abs(two) + abs(three) + abs(four);
 
         Log.i("score", "" + one + " " + two + " " + three + " " + four);
 
-        if (diff > 10)
+        if (diff > 1000)
             return 1;
         else
             return 0;

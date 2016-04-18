@@ -106,10 +106,10 @@ public class circleHough {
         return results;
     }
 
-//    public int[] draw() {
-//        output[(results[2] * width) + results[1]] = -1;
-//        output[(results[5] * width) + results[4]] = -1;
-//
-//        return output;
-//    }
+    public int[] draw() {
+        output[(results[2] * width) + results[1]] = -1;
+        output[(results[5] * width) + results[4]] = -1;
+
+        return output;
+    }
 }

@@ -65,22 +65,29 @@ public class processFrame {
         score[2] = results[4];
         score[3] = results[5];
 
+        orig = circleHoughObject.draw();
+
+        int[] array = overlayImage(orig, image, height, width);
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bitmap.setPixels(array, 0, width, 0, 0, width, height);
+
         return score;
     }
 
-//    public static int[] overlayImage(int[] input, Bitmap image, int height, int width) {
-//        int[] myImage = new int[width * height];
-//        image.getPixels(myImage, 0, width, 0, 0, width, height);
-//
-//        for (int x = 0; x < width; x++) {
-//            for (int y = 0; y < height; y++) {
-//                if ((input[y * width + x] & 0xff) > 0)
-//                    myImage[y * width + x] = 0x00ff0000;
-//            }
-//        }
-//
-//        return myImage;
-//    }
+    public static int[] overlayImage(int[] input, Bitmap image, int height, int width) {
+        int[] myImage = new int[width * height];
+        image.getPixels(myImage, 0, width, 0, 0, width, height);
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if ((input[y * width + x] & 0xff) > 0)
+                    myImage[y * width + x] = 0x00ff0000;
+            }
+        }
+
+        return myImage;
+    }
 
     public static Bitmap toGrayscale(Bitmap bmpOriginal) {
         int width, height;
